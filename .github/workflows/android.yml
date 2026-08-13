@@ -40,7 +40,8 @@ jobs:
           qt_source_root="${RUNNER_TEMP}/qtbase"
           qt_package_dir="${qt_source_root}/src/android/jar/src/org/qtproject/qt5/android"
           qt_classes="${RUNNER_TEMP}/qt-android-classes"
-          android_jar="${ANDROID_HOME}/platforms/android-30/android.jar"
+          android_jar="$(find "${ANDROID_HOME}/platforms" -mindepth 2 -maxdepth 2 \
+            -name android.jar -print | sort -V | tail -n 1)"
 
           test -f "${qt_android_jar}"
           test -f "${android_jar}"
