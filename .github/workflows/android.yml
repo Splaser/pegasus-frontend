@@ -31,6 +31,16 @@ jobs:
         run: |
           .circleci/prepare.sh
           curl -L ${TOOLS_URL}/openssl-111t_android.tar.xz | tar xJf - -C /opt/
+
+      - name: Patch Qt Android focus highlight
+        run: |
+          qt_root="/opt/${QT_VERSION}_${QT_TARGET}"
+          qt_edit_text="${qt_root}/src/android/jar/src/org/qtproject/qt5/android/QtEditText.java"
+          test -f "${qt_edit_text}"
+          patch --batch --forward --strip=1 --directory="${qt_root}" \
+            < "${GITHUB_WORKSPACE}/etc/patches/qt-5.15.10-android-disable-focus-highlight.patch"
+          grep -Fq 'setDefaultFocusHighlightEnabled(false);' "${qt_edit_text}"
+
       - name: Build
         env:
           BUILDOPTS: ANDROID_ABIS=${{ matrix.abi }} FORCE_QT_PNG=1
